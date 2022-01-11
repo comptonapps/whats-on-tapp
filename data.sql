@@ -42,6 +42,7 @@ CREATE TABLE drinks (
 CREATE TABLE draughts (
     drink_id INTEGER REFERENCES drinks(id) ON DELETE CASCADE,
     place_id INTEGER REFERENCES places(id) ON DELETE CASCADE,
+    PRIMARY KEY(drink_id, place_id),
     active BOOLEAN DEFAULT false NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -50,6 +51,7 @@ CREATE TABLE draughts (
 CREATE TABLE drink_ratings (
     drink_id INTEGER REFERENCES drinks(id) ON DELETE CASCADE,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    PRIMARY KEY(drink_id, user_id),
     rating INTEGER DEFAULT 0 NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -58,6 +60,7 @@ CREATE TABLE drink_ratings (
 CREATE TABLE place_ratings (
     place_id INTEGER REFERENCES places(id) ON DELETE CASCADE,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    PRIMARY KEY(place_id, user_id),
     rating INTEGER DEFAULT 0 NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -66,6 +69,7 @@ CREATE TABLE place_ratings (
 CREATE TABLE place_owners (
     place_id INTEGER REFERENCES places(id) ON DELETE CASCADE,
     user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+    PRIMARY KEY(place_id, user_id),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP 
 );
