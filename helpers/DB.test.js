@@ -12,7 +12,7 @@ describe('getCreateStringAndVariables method', () => {
     })
 });
 
-describe('create method', () => {
+describe('DB.create method', () => {
     test('it should create and return a user', async () => {
         const newUserData = {
             username: 'testuser',
@@ -30,6 +30,26 @@ describe('create method', () => {
         expect(user.state).toEqual(newUserData.state);
     });
 });
+
+describe('getUpdateStringAndVariables method', () => {
+    test('it should return a dynamic string to update a record and an array of variables', () => {
+        const [str, vars] = DB.getUpdateStringAndVariables('users', {username: 'newname'}, {id: 3});
+        expect(str).toEqual('UPDATE users SET username=$1 WHERE id=$2 RETURNING *');
+        expect(vars).toEqual(['newname', 3]);
+    })
+})
+
+describe('DB.update method', () => {
+
+});
+
+describe('DB.getDeleteStringAndVariables method', () => {
+    test('it should return a dynamic string for deleting a record and an array of variables', () => {
+        const [str, vars] = DB.getDeleteStringAndVariables('drinks', {id: 5});
+        expect(str).toEqual('DELETE FROM drinks WHERE id=$1 RETURNING *');
+        expect(vars).toEqual([5]);
+    })
+})
 
 afterAll(async () => {
     await db.query('DELETE FROM users');
