@@ -1,14 +1,14 @@
-DROP DATABASE IF EXISTS wat_db;
+DROP DATABASE IF EXISTS wat_db_test;
 
-CREATE DATABASE wat_db;
+CREATE DATABASE wat_db_test;
 
-\c wat_db;
+\c wat_db_test;
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
-    username VARCHAR(25) NOT NULL,
+    username VARCHAR(25) UNIQUE NOT NULL,
     password TEXT NOT NULL,
-    email VARCHAR(50) NOT NULL,
+    email VARCHAR(50) UNIQUE NOT NULL,
     city VARCHAR(48) NOT NULL,
     state VARCHAR(2) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
