@@ -1,6 +1,6 @@
 const express = require('express');
 const morgan = require('morgan');
-const db = require('./db');
+const { ExpressError } = require('./expressError');
 
 const app = express();
 
@@ -11,5 +11,16 @@ app.use(morgan('dev'));
 app.get('/', (req, res) => {
     return res.json({foo: 'bar'});
 })
+
+app.use((req, res, next) => {
+    const error = new ExpressError('Resource not Found', 404);
+    next(error);
+});
+
+app.use((error, req, res, next) => {
+    const status = error.status || 500;
+    const message = error.message || "Server Error";
+    return res.status(status).error(message);
+});
 
 module.exports = app;
