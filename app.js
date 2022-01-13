@@ -1,12 +1,15 @@
 const express = require('express');
 const morgan = require('morgan');
 const { ExpressError } = require('./expressError');
+const authRoutes = require('./routes/authRoutes');
 
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(morgan('dev'));
+
+app.use('/auth', authRoutes);
 
 app.get('/', (req, res) => {
     return res.json({foo: 'bar'});
