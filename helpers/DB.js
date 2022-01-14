@@ -31,7 +31,6 @@ class DB {
     static async getRecords(table, matchers) {
         const [str, vars] = this.getReadStringAndVariables(table, matchers);
         const results = await db.query(str, vars);
-        console.log(results.rows)
         return results.rows;
     };
 
