@@ -3,6 +3,7 @@ const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 const db = require('../db');
 const DB = require('./DB');
+const { DB_TABLES } = require('../constants');
 let testUser1Data = {
     username: 'testUser1',
     password: 'foobar11',
@@ -21,6 +22,7 @@ beforeAll(async () => {
         Object.values(testUser1Data)
         );
     testUser1 = result.rows[0];
+    delete testUser1.password;
 });
 
 
@@ -52,6 +54,29 @@ describe('DB.create method', () => {
         expect(user.email).toEqual(newUserData.email);
         expect(user.city).toEqual(newUserData.city);
         expect(user.state).toEqual(newUserData.state);
+        await db.query('DELETE FROM users WHERE id=$1', [user.id]);
+    });
+});
+
+describe('DB.getReadStringAndVariables method', () => {
+    test('it should return a dynamic read string and an array of variables', () => {
+        const [str, vars] = DB.getReadStringAndVariables('users', {id: 1});
+        console.log(str, vars);
+        expect(1).toBe(1);
+    });
+});
+
+describe('DB.getRecord method', () => {
+    test('it should return a record from the db', async () => {
+        const user = await DB.getRecord(DB_TABLES.USERS, {id: testUser1.id});
+        expect(user.username).toEqual(testUser1.username);
+    });
+});
+
+describe('DB.getRecords method', () => {
+    test('it should return an array of records', async () => {
+        const users = await DB.getRecords(DB_TABLES.USERS);
+        expect(users).toEqual([testUser1]);
     });
 });
 
@@ -87,7 +112,9 @@ describe('DB.deleteRecord method', () => {
         const result = await db.query(`SELECT * FROM users WHERE id=$1`, [userID]);
         expect(result.rows.length).toEqual(0);
     });
-})
+});
+
+
 
 afterAll(async () => {
     await db.query('DELETE FROM users');

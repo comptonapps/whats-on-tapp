@@ -5,6 +5,8 @@ const {
     DataCollisionError
 } = require('../expressError');
 
+const { DB_TABLES } = require('../constants');
+
 class DB {
     static async create(table, data) {
         const [str, variables] = this.getCreateStringAndVariables(table, data);
@@ -20,14 +22,19 @@ class DB {
     };
 
     static async getRecord(table, matchers) {
-        const results = getRecords(table, matchers);
+        const results = await this.getRecords(table, matchers);
         if (results.length) {
             return results[0];
         };
     };
 
     static async getRecords(table, matchers) {
+        const [str, vars] = this.getReadStringAndVariables(table, matchers);
+        const results = await db.query(str, vars);
+        console.log(results.rows)
+        return results.rows;
     };
+
 
     static async updateRecord(table, data, matchers) {
         const [str, vars] = this.getUpdateStringAndVariables(table, data, matchers);
@@ -52,6 +59,17 @@ class DB {
         str += ` (${Object.keys(data).join(',')}) VALUES`
         str += ` (${variables.map((k, i) => `$${i+1}`).join(',')}) RETURNING *`;
         return [str, variables];
+    };
+
+    static getReadStringAndVariables(table, matchers) {
+        let str = table === DB_TABLES.USERS ? `SELECT id, username, email, city, state, created_at, updated_at FROM ${table}` : `SELECT * FROM ${table}`;
+        let vars = [];
+        if (matchers) {
+            str += ` WHERE ${Object.keys(matchers).map((k, i) => `${k}=$${i+1}`).join(' AND ')}`;
+            vars = Object.values(matchers);
+        }
+
+        return [str, vars];
     };
 
     static getUpdateStringAndVariables(table, data, matchers) {
