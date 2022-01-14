@@ -19,8 +19,15 @@ class DataCollisionError extends ExpressError {
     };
 };
 
+class BadRequestError extends ExpressError {
+    constructor(message="Bad Request", status=401) {
+        super(message, status);
+    }
+}
+
 module.exports = {
     ExpressError,
     RecordNotFoundError,
-    DataCollisionError
+    DataCollisionError,
+    BadRequestError
 };

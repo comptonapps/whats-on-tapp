@@ -7,8 +7,8 @@ const bcrypt = require('bcrypt');
 
 class User {
     static async create(data) {
-        data.password = await bcrypt.hash(data.password, BCRYPT_WORK_FACTOR);
-        const user = await DB.create(DB_TABLES.USERS, data);
+        const password = await bcrypt.hash(data.password, +BCRYPT_WORK_FACTOR);
+        const user = await DB.create(DB_TABLES.USERS, {...data, password});
         delete user.password;
         return user;
     }
