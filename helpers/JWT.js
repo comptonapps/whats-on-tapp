@@ -5,6 +5,7 @@ const { BadRequestError } = require('../expressError');
 
 class JWT {
     static getJWT(data) {
+        console.log(SECRET);
         const token = jwt.sign(data, SECRET);
         return token;
     }
