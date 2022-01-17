@@ -61,7 +61,6 @@ describe('DB.create method', () => {
 describe('DB.getReadStringAndVariables method', () => {
     test('it should return a dynamic read string and an array of variables', () => {
         const [str, vars] = DB.getReadStringAndVariables('users', {id: 1});
-        console.log(str, vars);
         expect(1).toBe(1);
     });
 });

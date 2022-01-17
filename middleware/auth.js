@@ -12,11 +12,19 @@ function authenticateJWT(req, res, next) {
     }
 };
 
+function userIsAuthenticated(req, res, next) {
+    try {
+        if (!res.locals.user) {
+            throw new ExpressError('Authentication needed', 403);
+        }
+        return next();
+    } catch(e) {
+        return next(e);
+    }
+}
+
 function checkForCorrectUserOrAdmin(req, res, next) {
-    console.log('PARAMS: ', req.params);
     const { user_id } = req.params;
-    console.log(user_id);
-    console.log(res.locals.user.id)
     if (res.locals.user && (res.locals.user.is_admin || res.locals.user.id === user_id)) {
         return next();
     }
@@ -25,5 +33,6 @@ function checkForCorrectUserOrAdmin(req, res, next) {
 
 module.exports = {
     authenticateJWT,
-    checkForCorrectUserOrAdmin
+    checkForCorrectUserOrAdmin,
+    userIsAuthenticated
 }

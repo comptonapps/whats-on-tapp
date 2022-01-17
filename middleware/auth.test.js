@@ -3,7 +3,8 @@ const path = require('path');
 require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
 const { 
     authenticateJWT, 
-    checkForCorrectUserOrAdmin 
+    checkForCorrectUserOrAdmin,
+    userIsAuthenticated
 } = require('./auth');
 const JWT = require('../helpers/JWT');
 const { ExpressError } = require('../expressError')
@@ -63,5 +64,27 @@ describe('checkForCorrectUserOrAdmin testing', () => {
             expect(err).toBeFalsy();
         };
         checkForCorrectUserOrAdmin(req, res, next);
+    });
+});
+
+describe('userIsAuthenticated tests', () => {
+    test('it should pass an error for a non-authenticated user', () => {
+        expect.assertions(1);
+        const req = { body: { token }};
+        const res = { locals: {}};
+        const next = function(err) {
+            expect(err).toBeTruthy();
+        };
+        userIsAuthenticated(req, res, next);
+    });
+
+    test('it should not pass an error for an authenticated user', () => {
+        expect.assertions(1);
+        const req = { body: { token }};
+        const res = { locals: { user: fakeUser}};
+        const next = function(err) {
+            expect(err).toBeFalsy();
+        };
+        userIsAuthenticated(req, res, next);
     });
 });
