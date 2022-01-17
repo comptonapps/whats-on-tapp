@@ -25,7 +25,7 @@ function userIsAuthenticated(req, res, next) {
 
 function checkForCorrectUserOrAdmin(req, res, next) {
     const { user_id } = req.params;
-    if (res.locals.user && (res.locals.user.is_admin || res.locals.user.id === user_id)) {
+    if (res.locals.user && (res.locals.user.is_admin || (res.locals.user.id === user_id || res.locals.user.id === req.body.user_id))) {
         return next();
     }
     return next(new ExpressError("Unauthorized user", 403));

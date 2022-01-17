@@ -1,8 +1,8 @@
-DROP DATABASE IF EXISTS wat_db_test;
+DROP DATABASE IF EXISTS wat_db;
 
-CREATE DATABASE wat_db_test;
+CREATE DATABASE wat_db;
 
-\c wat_db_test;
+\c wat_db;
 
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
@@ -19,6 +19,7 @@ CREATE TABLE places (
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
     address VARCHAR(75) NOT NULL,
+    city VARCHAR(30) NOT NULL,
     state VARCHAR(2) NOT NULL,
     zip VARCHAR(5) NOT NULL,
     url TEXT,

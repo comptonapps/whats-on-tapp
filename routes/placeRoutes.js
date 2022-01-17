@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const schemaValidator = require('../helpers/schemaValidator');
 
 router.get('/', async (req, res, next) => {
     try {
@@ -19,6 +20,7 @@ router.get('/:id', async (req, res, next) => {
 
 router.post('/', async (req, res, next) => {
     try {
+        const data = req.body;
 
     } catch(e) {
         return next(e);
