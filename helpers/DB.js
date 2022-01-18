@@ -79,7 +79,7 @@ class DB {
         str += Object.keys(matchers).map((k, i) => {
             vars.push(Object.values(matchers)[i]);
             return `${k}=$${vars.length}`;
-        }) + ' RETURNING *';
+        }).join(' AND ') + ' RETURNING *';
        return [str, vars];
     };
 
