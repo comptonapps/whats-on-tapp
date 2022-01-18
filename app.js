@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const { ExpressError } = require('./expressError');
 const { authenticateJWT  } = require('./middleware/auth');
 const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/userRoutes');
 
 const app = express();
 
@@ -13,6 +14,7 @@ app.use(authenticateJWT);
 app.use(morgan('dev'));
 
 app.use('/auth', authRoutes);
+app.use('/user', userRoutes);
 
 app.get('/', (req, res) => {
     return res.json({foo: 'bar'});
