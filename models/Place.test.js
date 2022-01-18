@@ -15,18 +15,19 @@ const placeData = {
 
 describe('Place.create method', () => {
     test('it should create and return a place', async () => {
-        const place = await Place.create(placeData);
+        place = await Place.create(placeData);
         expect(place).toEqual({
             ...placeData, 
             id: expect.any(Number),
             created_at: expect.any(Date),
             updated_at: expect.any(Date)
         });
-
     });
 });
 
+
+
 afterAll(async () => {
     await db.query(`DELETE FROM ${DB_TABLES.PLACES}`);
-    db.end();
+    await db.end();
 });

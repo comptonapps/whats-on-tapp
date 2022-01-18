@@ -22,5 +22,5 @@ describe('User class create method', () => {
 
 afterAll(async () => {
     await db.query('DELETE FROM users');
-    db.end();
+    await db.end();
 });

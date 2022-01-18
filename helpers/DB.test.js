@@ -117,6 +117,6 @@ describe('DB.deleteRecord method', () => {
 
 afterAll(async () => {
     await db.query('DELETE FROM users');
-    db.end();
+    await db.end();
 });
 

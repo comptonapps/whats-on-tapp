@@ -26,6 +26,7 @@ class DB {
         if (results.length) {
             return results[0];
         };
+        throw new RecordNotFoundError("Record not found", 404);
     };
 
     static async getRecords(table, matchers) {
@@ -84,7 +85,7 @@ class DB {
 
     static getDeleteStringAndVariables(table, matchers) {
         let str = `DELETE FROM ${table} WHERE `;
-        str += Object.keys(matchers).map((k, i) => `${k}=$${i+1}`) + " RETURNING *";
+        str += Object.keys(matchers).map((k, i) => `${k}=$${i+1}`).join(' AND ') + " RETURNING *";
         return [str, Object.values(matchers)];
     };
 };
