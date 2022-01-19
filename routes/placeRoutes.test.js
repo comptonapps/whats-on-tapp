@@ -48,10 +48,10 @@ beforeAll(async () => {
     };
     p1 = await Place.create(p1Data);
     p2 = await Place.create(p2Data);
-    p1.created_at = p1.created_at.toString();
-    p1.updated_at = `${p1.updated_at}`;
-    p2.created_at = `${p2.created_at}`;
-    p2.updated_at = `${p2.updated_at}`;
+    p1.created_at = p1.created_at.toISOString();
+    p1.updated_at = p1.updated_at.toISOString();
+    p2.created_at = p2.created_at.toISOString();
+    p2.updated_at = p2.updated_at.toISOString();
 
 });
 
@@ -60,6 +60,7 @@ describe('GET /places', () => {
         const response = await request(app).get('/place').set('authorization', `Bearer ${token}`);
         expect(response.status).toEqual(200);
         expect(response.body.places).toHaveLength(2);
+        expect(response.body.places).toEqual([p1, p2]);
         expect(response.body.places[0].id).toEqual(p1.id);
         expect(response.body.places[0].name).toEqual(p1.name);
         expect(response.body.places[0].address).toEqual(p1.address);
@@ -84,6 +85,7 @@ describe('GET /place/:id', () => {
     test('it should return data for a matching place id', async () => {
         const response = await request(app).get(`/place/${p1.id}`).set('authorization', `Bearer ${token}`);
         expect(response.status).toBe(200);
+        expect(response.body.place).toEqual(p1);
         expect(response.body.place.id).toEqual(p1.id);
         expect(response.body.place.name).toEqual(p1.name);
     });
