@@ -53,7 +53,9 @@ router.patch('/:id', checkForCorrectUserOrAdmin, async (req, res, next) => {
 
 router.delete('/:id', checkForCorrectUserOrAdmin, async (req, res, next) => {
     try {
-
+        const { id } = req.params;
+        await Place.delete(id);
+        return res.json({message: "deleted"});
     } catch(e) {
         return next(e);
     }

@@ -216,7 +216,29 @@ describe('POST /place', () => {
         const response = await request(app).patch(`/place/${p1.id}`).send(updatedData);
         expect(response.status).toBe(403);
     });
-})
+});
+
+describe('/DELETE /place/:id', () => {
+    test('it should delete a place and return a deleted message with an admin token', async () => {
+        const response = await request(app).delete(`/place/${p1.id}`).set('authorization', `Bearer ${adminToken}`);
+        expect(response.status).toBe(200);
+        expect(response.body.message).toEqual("deleted");
+    });
+
+    test('it should return a 404 code for a non-existent place', async () => {
+        const response = await request(app).delete(`/place/0`).set('authorization', `Bearer ${adminToken}`);
+        expect(response.status).toBe(404);
+    });
+
+    test('it should return a 403 error code for a non-admin token', async () => {
+        const response = await request(app).delete(`/place/${p2.id}`);
+    });
+
+    test('it should return a 403 error code for a non authenticated user', async () => {
+        const response = await request(app).delete(`/place/${p2.id}`);
+        expect(response.status).toBe(403);
+    });
+});
 
 afterAll(async () => {
     await db.query('DELETE FROM places');
