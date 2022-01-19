@@ -82,7 +82,7 @@ describe('DB.getRecords method', () => {
 describe('getUpdateStringAndVariables method', () => {
     test('it should return a dynamic string to update a record and an array of variables', () => {
         const [str, vars] = DB.getUpdateStringAndVariables('users', {username: 'newname'}, {id: 3});
-        expect(str).toEqual('UPDATE users SET username=$1 WHERE id=$2 RETURNING *');
+        expect(str).toEqual('UPDATE users SET updated_at=CURRENT_TIMESTAMP,username=$1 WHERE id=$2 RETURNING *');
         expect(vars).toEqual(['newname', 3]);
     })
 })

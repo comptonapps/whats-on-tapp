@@ -3,9 +3,14 @@ const { ExpressError } = require('../expressError');
 
 function authenticateJWT(req, res, next) {
     try {
-        const { token } = req.body;
-        res.locals.user = JWT.validateJWT(token);
-        delete req.body.token
+        const { token } = req.body || req.headers.authorizaton.replace(/^[Bb]earer /, "").trim();
+        if (token) {
+            res.locals.user = JWT.validateJWT(token);
+            delete req.body.token
+        } else {
+            const headerToken = req.headers.authorization;
+            res.locals.user = JWT.validateJWT(headerToken.replace(/^[Bb]earer /, "").trim());
+        }
         return next();
     } catch(e) {
         return next();

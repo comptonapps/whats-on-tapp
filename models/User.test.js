@@ -26,7 +26,6 @@ describe('User.create method', () => {
 describe('User.get method', () => {
     test('it should return an array of users', async () => {
         const users = await User.get();
-        console.log(users);
         expect(users).toEqual([user]);
     });
 });

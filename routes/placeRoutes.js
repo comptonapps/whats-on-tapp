@@ -1,27 +1,38 @@
 const express = require('express');
 const router = express.Router();
+const {
+    userIsAuthenticated,
+    checkForCorrectUserOrAdmin
+} = require('../middleware/auth')
 const schemaValidator = require('../helpers/schemaValidator');
+const placeCreateSchema = require('../schemata/place/placeCreateSchema.json');
+const Place = require('../models/Place')
 
-router.get('/', async (req, res, next) => {
+router.get('/', userIsAuthenticated, async (req, res, next) => {
     try {
-
+        const places = await Place.get();
+        return res.json({places});
     } catch(e) {
         return next(e);
     }
 });
 
-router.get('/:id', async (req, res, next) => {
+router.get('/:id', userIsAuthenticated, async (req, res, next) => {
     try {
-
+        const { id } = req.params;
+        const place = await Place.getById(id);
+        return res.json({place});
     } catch(e) {
         return next(e);
     }
 });
 
-router.post('/', async (req, res, next) => {
+router.post('/', checkForCorrectUserOrAdmin, async (req, res, next) => {
     try {
-        const data = req.body;
-
+        const placeData = req.body;
+        schemaValidator(placeData, placeCreateSchema);
+        const place = await Place.create(placeData);
+        return res.status(201).json({place});
     } catch(e) {
         return next(e);
     }
