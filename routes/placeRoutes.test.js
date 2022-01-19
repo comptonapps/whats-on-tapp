@@ -189,6 +189,35 @@ describe('POST /place', () => {
     });
 });
 
+describe('POST /place', () => {
+    const updatedData = {
+        name: "Gonad's Gully",
+        address: "116 Elm Street",
+        city: "Springwood",
+        state: "OH",
+        url: "http://www.gonads.com"
+    };
+    test('it should update place data for an admin', async () => {
+        const response = await request(app).patch(`/place/${p1.id}`).set('authorization', `Bearer ${adminToken}`).send(updatedData);
+        expect(response.status).toBe(200);
+        const place = response.body.place;
+        expect(place.id).toEqual(p1.id);
+        expect(place.name).toEqual(updatedData.name);
+        expect(place.address).toEqual(updatedData.address);
+        expect(place.url).toEqual(updatedData.url);
+    });
+
+    test('it should return a 403 error code for a non-admin token', async () => {
+        const response = await request(app).patch(`/place/${p1.id}`).set('authorization', `Bearer ${token}`).send(updatedData);
+        expect(response.status).toBe(403);
+    });
+
+    test('it should return a 403 error code for a non authenticated user', async () => {
+        const response = await request(app).patch(`/place/${p1.id}`).send(updatedData);
+        expect(response.status).toBe(403);
+    });
+})
+
 afterAll(async () => {
     await db.query('DELETE FROM places');
     await db.end();

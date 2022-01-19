@@ -6,6 +6,7 @@ const {
 } = require('../middleware/auth')
 const schemaValidator = require('../helpers/schemaValidator');
 const placeCreateSchema = require('../schemata/place/placeCreateSchema.json');
+const placeUpdateSchema = require('../schemata/place/placeUpdateSchema.json');
 const Place = require('../models/Place')
 
 router.get('/', userIsAuthenticated, async (req, res, next) => {
@@ -38,15 +39,19 @@ router.post('/', checkForCorrectUserOrAdmin, async (req, res, next) => {
     }
 });
 
-router.patch('/:id', async (req, res, next) => {
+router.patch('/:id', checkForCorrectUserOrAdmin, async (req, res, next) => {
     try {
-
+        const placeData = req.body;
+        const { id } = req.params;
+        schemaValidator(placeData, placeUpdateSchema);
+        const place = await Place.update(id, placeData);
+        return res.json({place});
     } catch(e) {
         return next(e);
     }
 });
 
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', checkForCorrectUserOrAdmin, async (req, res, next) => {
     try {
 
     } catch(e) {
