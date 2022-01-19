@@ -73,7 +73,7 @@ class DB {
     };
 
     static getUpdateStringAndVariables(table, data, matchers) {
-        let str = `UPDATE ${table} SET `;
+        let str = `UPDATE ${table} SET updated_at=CURRENT_TIMESTAMP,`;
         const vars = Object.values(data);
         str += Object.keys(data).map((k, i) => `${k}=$${i+1}`).join(',') + " WHERE ";
         str += Object.keys(matchers).map((k, i) => {
