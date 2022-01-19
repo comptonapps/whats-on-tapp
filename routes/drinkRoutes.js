@@ -1,41 +1,56 @@
 const express = require('express');
 const router = express.Router();
+const { 
+    userIsAuthenticated,
+    checkForCorrectUserOrAdmin 
+} = require('../middleware/auth');
+const Drink = require('../models/Drink');
 
-router.get('/', async (req, res, next) => {
+router.get('/', userIsAuthenticated, async (req, res, next) => {
     try {
-
+        const drinks = await Drink.get();
+        return res.json({drinks});
     } catch(e) {
         return next(e);
     }
 });
 
-router.get('/:id', async (req, res, next) => {
+router.get('/:id', userIsAuthenticated, async (req, res, next) => {
     try {
-
+        const { id } = req.params;
+        const drink = await Drink.getById(id);
+        return res.json({drink});
     } catch(e) {
         return next(e);
     }
 });
 
-router.post('/', async (req, res, next) => {
+router.post('/', checkForCorrectUserOrAdmin, async (req, res, next) => {
     try {
-
+        const drinkData = req.body;
+        const drink = await Drink.create(drinkData);
+        return res.status(201).json({drink});
     } catch(e) {
         return next(e);
     }
 });
 
-router.patch('/:id', async (req, res, next) => {
+router.patch('/:id', checkForCorrectUserOrAdmin, async (req, res, next) => {
     try {
-
+        const { id } = req.params;
+        const drinkData = req.body;
+        const drink = await Drink.update(id, drinkData);
+        return res.json({drink});
     } catch(e) {
         return next(e);
     }
 });
 
-router.delete('/:id', async (req, res, next) => {
+router.delete('/:id', checkForCorrectUserOrAdmin, async (req, res, next) => {
     try {
-
+        const { id } = req.params;
+        await Drink.delete(id);
+        return res.json({message: "deleted"});
     } catch(e) {
         return next(e);
     }
