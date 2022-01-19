@@ -1,3 +1,4 @@
+process.env.NODE_ENV='test';
 const authenticateUser = require('./authenticateUser');
 const db = require('../db');
 const User = require('../models/User');
@@ -32,6 +33,6 @@ describe('authenticateUser method', () => {
 });
 
 afterAll(async () => {
-    await db.query(`DELETE FROM users WHERE username='testauthuser'`);
-    db.end();
+    await db.query(`DELETE FROM users`);
+    await db.end();
 });
