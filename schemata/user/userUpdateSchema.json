@@ -1,0 +1,68 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "title": "The root schema",
+    "description": "The root schema comprises the entire JSON document.",
+    "default": {},
+    "examples": [
+        {
+            "password": "password",
+            "email": "j@c.com",
+            "city": "Seattle",
+            "state": "WA"
+        }
+    ],
+    "required": [],
+    "properties": {
+        "password": {
+            "$id": "#/properties/password",
+            "type": "string",
+            "title": "The password schema",
+            "minLength": 8,
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "password"
+            ]
+        },
+        "email": {
+            "$id": "#/properties/email",
+            "type": "string",
+            "title": "The email schema",
+            "format" : "email",
+            "minLength": 6,
+            "maxLength": 50,
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "j@c.com"
+            ]
+        },
+        "city": {
+            "$id": "#/properties/city",
+            "type": "string",
+            "title": "The city schema",
+            "minLength" : 2,
+            "maxLength" : 48,
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "Seattle"
+            ]
+        },
+        "state": {
+            "$id": "#/properties/state",
+            "type": "string",
+            "title": "The state schema",
+            "minLength" : 2,
+            "maxLength" : 2,
+            "description": "An explanation about the purpose of this instance.",
+            "default": "",
+            "examples": [
+                "WA"
+            ]
+        }
+    },
+    "additionalProperties": false
+}
