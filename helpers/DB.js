@@ -26,7 +26,7 @@ class DB {
         if (results.length) {
             return results[0];
         };
-        throw new RecordNotFoundError("Record not found", 404);
+        throw new RecordNotFoundError(`Record not found in ${table}`, 404);
     };
 
     static async getRecords(table, matchers) {
