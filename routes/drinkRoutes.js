@@ -4,6 +4,9 @@ const {
     userIsAuthenticated,
     checkForCorrectUserOrAdmin 
 } = require('../middleware/auth');
+const drinkCreateSchema = require('../schemata/drink/drinkCreateSchema.json');
+const drinkUpdateSchema = require('../schemata/drink/drinkUpdateSchema.json');
+const schemaValidator = require('../helpers/schemaValidator');
 const Drink = require('../models/Drink');
 
 router.get('/', userIsAuthenticated, async (req, res, next) => {
@@ -28,6 +31,7 @@ router.get('/:id', userIsAuthenticated, async (req, res, next) => {
 router.post('/', checkForCorrectUserOrAdmin, async (req, res, next) => {
     try {
         const drinkData = req.body;
+        schemaValidator(drinkData, drinkCreateSchema);
         const drink = await Drink.create(drinkData);
         return res.status(201).json({drink});
     } catch(e) {
@@ -39,6 +43,7 @@ router.patch('/:id', checkForCorrectUserOrAdmin, async (req, res, next) => {
     try {
         const { id } = req.params;
         const drinkData = req.body;
+        schemaValidator(drinkData, drinkUpdateSchema);
         const drink = await Drink.update(id, drinkData);
         return res.json({drink});
     } catch(e) {

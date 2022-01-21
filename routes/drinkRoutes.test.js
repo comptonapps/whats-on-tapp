@@ -72,7 +72,7 @@ describe('GET /drink/:id', () => {
     test('it should respond with an error message and 404 code for a non-existent drink', async () => {
         const response = await request(app).get(`/drink/0`).set('authorization', `Bearer ${token}`);
         expect(response.status).toBe(404);
-        expect(response.body.message).toEqual('Record not found');
+        expect(response.body.message).toEqual('Record not found in drinks');
     });
 
     test('it should respond with an error message and 403 code for a non authenticated user', async () => {

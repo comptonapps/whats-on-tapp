@@ -134,9 +134,40 @@ describe('PATCH /users/:user_id', () => {
         expect(updatedUser.email).toEqual(updateData.email);
         expect(updatedUser.city).toEqual(updateData.city);
         expect(updatedUser.state).toEqual(updateData.state);
-    })
+    });
+});
 
+describe('DELETE /users/:user_id', () => {
+    test('it should respond with a 403 error code and message for a non-authenticated user', async () => {
+        const response = await request(app).delete(`/user/${u1.id}`);
+        expect(response.status).toBe(403);
+        expect(response.body.message).toEqual('Unauthorized user');
+    });
 
+    test('it shuold respond with a 403 error code and message for a bad token request', async () => {
+        const response = await request(app).delete(`/user/${u1.id}`).set('authorization', `Bearer foobar`);
+        expect(response.status).toBe(403);
+        expect(response.body.message).toEqual('Unauthorized user');
+    });
+
+    test('it should delete a user for an admin token request', async () => {
+        const response = await request(app).delete(`/user/${u2.id}`).set('authorization', `Bearer ${adminToken}`);
+        expect(response.status).toBe(200);
+        const check = await request(app).get(`/user/${u2.id}`).set('authorization', `Bearer ${adminToken}`);
+        expect(check.status).toBe(404);
+    });
+
+    test('it should delete a user with a token id that matches the route id', async () => {
+        const response = await request(app).delete(`/user/${u1.id}`).set('authorization', `Bearer ${token}`);
+        expect(response.status).toBe(200);
+        const check = await request(app).get(`/user/${u1.id}`).set('authorization', `Bearer ${adminToken}`);
+        expect(check.status).toBe(404);
+    });
+    
+    test('it should respond with a 404 error code for a non-existent user', async () => {
+        const response = await request(app).delete(`/user/0`).set('authorization', `Bearer ${adminToken}`);
+        expect(response.status).toBe(404);
+    }); 
 });
 
 afterAll(async () => {
