@@ -20,7 +20,11 @@ describe('verifyDrink function', () => {
     });
 
     test('it should throw an error if the drink does not exist', async () => {
-        await expect(() => verifyDrink({params: {drink_id: 0}}, {}, () => {})).rejects.toThrow('Record not found in drinks');
+        expect.assertions(1);
+        const next = function (err) {
+            expect(err).toBeTruthy();
+        }
+        await verifyDrink({params: {drink_id: 0}}, {}, next);
     });
 });
 
@@ -30,7 +34,11 @@ describe('verifyPlace function', () => {
     });
 
     test('it should throw an error if the place does not exist', async () => {
-        await expect(() => verifyPlace({params: {place_id: 0}}, {}, () => {})).rejects.toThrow('Record not found in places');
+        expect.assertions(1);
+        const next = function (err) {
+            expect(err).toBeTruthy();
+        }
+        await verifyPlace({params: {place_id: 0}}, {}, next);
     });
 });
 
