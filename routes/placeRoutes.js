@@ -7,7 +7,8 @@ const {
 const schemaValidator = require('../helpers/schemaValidator');
 const placeCreateSchema = require('../schemata/place/placeCreateSchema.json');
 const placeUpdateSchema = require('../schemata/place/placeUpdateSchema.json');
-const Place = require('../models/Place')
+const Place = require('../models/Place');
+const PlaceRating = require('../models/PlaceRating');
 
 router.get('/', userIsAuthenticated, async (req, res, next) => {
     try {
@@ -18,6 +19,7 @@ router.get('/', userIsAuthenticated, async (req, res, next) => {
     }
 });
 
+
 router.get('/:id', userIsAuthenticated, async (req, res, next) => {
     try {
         const { id } = req.params;
@@ -27,6 +29,18 @@ router.get('/:id', userIsAuthenticated, async (req, res, next) => {
         return next(e);
     }
 });
+
+router.get('/:place_id/rating', userIsAuthenticated, () => {
+    try {
+        const { place_id } = req.params; 
+        const place_ratings = PlaceRating.getByPlaceId(place_id);
+        return res.json({place_ratings});
+    } catch (e) {
+        return next(e);
+    }
+});
+
+//TODO: Route for draught creation
 
 router.post('/', checkForCorrectUserOrAdmin, async (req, res, next) => {
     try {

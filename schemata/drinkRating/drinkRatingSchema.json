@@ -1,0 +1,55 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "title": "The root schema",
+    "description": "The root schema comprises the entire JSON document.",
+    "default": {},
+    "examples": [
+        {
+            "drink_id": 5,
+            "user_id": 1345,
+            "rating": 3
+        }
+    ],
+    "required": [
+        "drink_id",
+        "user_id",
+        "rating"
+    ],
+    "properties": {
+        "drink_id": {
+            "$id": "#/properties/drink_id",
+            "type": "integer",
+            "title": "The drink_id schema",
+            "description": "The database id of the drink",
+            "default": 0,
+            "examples": [
+                5
+            ]
+        },
+        "user_id": {
+            "$id": "#/properties/user_id",
+            "type": "integer",
+            "title": "The user_id schema",
+            "description": "The database id of the user",
+            "default": 0,
+            "examples": [
+                1345
+            ]
+        },
+        "rating": {
+            "$id": "#/properties/rating",
+            "type": "integer",
+            "title": "The rating schema",
+            "minimum" : 1,
+            "maximum" : 5,
+            "description": "The user chose rating",
+            "default": 0,
+            "examples": [
+                3
+            ]
+        }
+    },
+    "additionalProperties": true
+}

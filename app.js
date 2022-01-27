@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan');
+const cors = require('cors');
 const { ExpressError } = require('./expressError');
 const { authenticateJWT  } = require('./middleware/auth');
 const authRoutes = require('./routes/authRoutes');
@@ -10,6 +11,7 @@ const drinkRoutes = require('./routes/drinkRoutes');
 
 const app = express();
 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(authenticateJWT);

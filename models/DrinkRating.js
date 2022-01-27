@@ -20,10 +20,6 @@ class DrinkRating {
         return await DB.getRecord(DB_TABLES.DRINK_RATINGS, {user_id, drink_id});
     }
 
-    static async getById(id) {
-        return await DB.getRecord(DB_TABLES.DRINK_RATINGS, {id});
-    };
-
     static async update(user_id, drink_id, rating) {
         return await DB.updateRecord(DB_TABLES.DRINK_RATINGS, {rating}, {user_id, drink_id});
     };

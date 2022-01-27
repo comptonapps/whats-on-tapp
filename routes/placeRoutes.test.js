@@ -1,72 +1,32 @@
-process.env.NODE_ENV='test';
-const path = require('path');
-require('dotenv').config({ path: path.resolve(__dirname, '../.env') });
-const SECRET = process.env.JWT_SECRET;
-const request = require('supertest');
+const {
+    testBeforeAll,
+    testBeforeEach,
+    testAfterAll,
+    testAfterEach,
+    users,
+    drinks,
+    places,
+    drinkRatings,
+    placeRatings,
+    placeOwners,
+    tokens
+} = require('../testSetup/setup');
 const app = require('../app');
-const db = require('../db');
-const jwt = require('jsonwebtoken');
-const Place = require('../models/Place');
+const request = require('supertest');
 
-let token;
-let adminToken;
-let p1;
-let p2;
+beforeAll(testBeforeAll);
 
-beforeAll(async () => {
-    const fakeUser = {
-        id: 667,
-        username: "fu667",
-        is_admin: false
-    };
-
-    const fakeAdmin = {
-        id: 122,
-        username: "admin",
-        is_admin: true
-    }
-
-    token = jwt.sign(fakeUser, SECRET);
-    adminToken = jwt.sign(fakeAdmin, SECRET);
-
-    const p1Data = {
-        name: "The Old 5th Avenue",
-        address: "8530 5th Ave NE",
-        city: "Seattle",
-        state: "WA",
-        zip: "98115"
-    };
-
-    const p2Data = {
-        name: "Reservoir Tavern",
-        address: "8603 Roosevelt Way NE",
-        city: "Seattle",
-        state: "WA",
-        zip: "98115",
-        url: "http://www.therez.com",
-        phone: "2067777777"
-    };
-    p1 = await Place.create(p1Data);
-    p2 = await Place.create(p2Data);
-    p1.created_at = p1.created_at.toISOString();
-    p1.updated_at = p1.updated_at.toISOString();
-    p2.created_at = p2.created_at.toISOString();
-    p2.updated_at = p2.updated_at.toISOString();
-
-});
+beforeEach(testBeforeEach);
 
 describe('GET /places', () => {
     test('it should return a list of places', async () => {
-        const response = await request(app).get('/place').set('authorization', `Bearer ${token}`);
+        const response = await request(app).get('/place').set('authorization', `Bearer ${tokens.user}`);
         expect(response.status).toEqual(200);
-        expect(response.body.places).toHaveLength(2);
-        expect(response.body.places).toEqual([p1, p2]);
-        expect(response.body.places[0].id).toEqual(p1.id);
-        expect(response.body.places[0].name).toEqual(p1.name);
-        expect(response.body.places[0].address).toEqual(p1.address);
-        expect(response.body.places[0].city).toEqual(p1.city);
-        expect(response.body.places[0].state).toEqual(p1.state);
-        expect(response.body.places[1].id).toEqual(p2.id);
+        expect(response.body.places).toHaveLength(places.length);
+        expect(response.body.places).toEqual(places);
+        expect(response.body.places[0].id).toEqual(places[0].id);
+        expect(response.body.places[0].name).toEqual(places[0].name);
+        expect(response.body.places[1].id).toEqual(places[1].id);
 
     });
 
@@ -83,20 +43,18 @@ describe('GET /places', () => {
 
 describe('GET /place/:id', () => {
     test('it should return data for a matching place id', async () => {
-        const response = await request(app).get(`/place/${p1.id}`).set('authorization', `Bearer ${token}`);
+        const response = await request(app).get(`/place/${places[0].id}`).set('authorization', `Bearer ${tokens.user}`);
         expect(response.status).toBe(200);
-        expect(response.body.place).toEqual(p1);
-        expect(response.body.place.id).toEqual(p1.id);
-        expect(response.body.place.name).toEqual(p1.name);
+        expect(response.body.place).toEqual(places[0]);
     });
 
     test('it should return a 403 error if there is no token', async () => {
-        const response = await request(app).get(`/place/${p1.id}`);
+        const response = await request(app).get(`/place/${places[0].id}`);
         expect(response.status).toBe(403); 
     });
 
     test('it should return with a 403 response with an invalid token', async () => {
-        const response = await request(app).get(`/place/${p1.id}`).set('authorization', `Bearer faketoken`);
+        const response = await request(app).get(`/place/${places[0].id}`).set('authorization', `Bearer faketoken`);
         expect(response.status).toBe(403);
     });
 });
@@ -110,7 +68,7 @@ describe('POST /place', () => {
             state: "CA", 
             zip: "30033"
         }
-        const response = await request(app).post(`/place`).set('authorization', `Bearer ${token}`).send(newPlaceData);
+        const response = await request(app).post(`/place`).set('authorization', `Bearer ${tokens.user}`).send(newPlaceData);
         expect(response.status).toBe(403);
     });
 
@@ -134,7 +92,7 @@ describe('POST /place', () => {
             state: "CA", 
             zip: "30033"
         }
-        const response = await request(app).post(`/place`).set('authorization', `Bearer ${adminToken}`).send(newPlaceData);
+        const response = await request(app).post(`/place`).set('authorization', `Bearer ${tokens.admin}`).send(newPlaceData);
         const place = response.body.place;
         expect(response.status).toBe(201);
         expect(place.name).toEqual(newPlaceData.name);
@@ -150,7 +108,7 @@ describe('POST /place', () => {
             state: "C", 
             zip: "3003"
         }
-        const response = await request(app).post(`/place`).set('authorization', `Bearer ${adminToken}`).send(newPlaceData);
+        const response = await request(app).post(`/place`).set('authorization', `Bearer ${tokens.admin}`).send(newPlaceData);
         expect(response.status).toBe(400);
     });
 
@@ -158,7 +116,7 @@ describe('POST /place', () => {
         const newPlaceData = {
             state: "WA"
         };
-        const response = await request(app).post(`/place`).set('authorization', `Bearer ${adminToken}`).send(newPlaceData);
+        const response = await request(app).post(`/place`).set('authorization', `Bearer ${tokens.admin}`).send(newPlaceData);
         expect(response.status).toBe(400);
     });
 
@@ -171,7 +129,7 @@ describe('POST /place', () => {
             zip: "30033",
             foobar: "baz"
         }
-        const response = await request(app).post(`/place`).set('authorization', `Bearer ${adminToken}`).send(newPlaceData);
+        const response = await request(app).post(`/place`).set('authorization', `Bearer ${tokens.admin}`).send(newPlaceData);
         const place = response.body.place;
         expect(response.status).toBe(400);
     });
@@ -185,13 +143,13 @@ describe('POST /place', () => {
             zip: "30033",
             url: "www.baz.com"
         }
-        const response = await request(app).post(`/place`).set('authorization', `Bearer ${adminToken}`).send(newPlaceData);
+        const response = await request(app).post(`/place`).set('authorization', `Bearer ${tokens.admin}`).send(newPlaceData);
         expect(response.status).toBe(400);
         expect(response.body.message).toEqual([ 'instance.url does not conform to the "uri" format' ]);
     });
 });
 
-describe('POST /place', () => {
+describe('PATCH /place', () => {
     const updatedData = {
         name: "Gonad's Gully",
         address: "116 Elm Street",
@@ -200,49 +158,51 @@ describe('POST /place', () => {
         url: "http://www.gonads.com"
     };
     test('it should update place data for an admin', async () => {
-        const response = await request(app).patch(`/place/${p1.id}`).set('authorization', `Bearer ${adminToken}`).send(updatedData);
+        const response = await request(app).patch(`/place/${places[0].id}`).set('authorization', `Bearer ${tokens.admin}`).send(updatedData);
         expect(response.status).toBe(200);
         const place = response.body.place;
-        expect(place.id).toEqual(p1.id);
+        expect(place.id).toEqual(places[0].id);
         expect(place.name).toEqual(updatedData.name);
         expect(place.address).toEqual(updatedData.address);
         expect(place.url).toEqual(updatedData.url);
+        expect(place.updated_at).not.toEqual(places[0].updated_at)
     });
 
     test('it should return a 403 error code for a non-admin token', async () => {
-        const response = await request(app).patch(`/place/${p1.id}`).set('authorization', `Bearer ${token}`).send(updatedData);
+        const response = await request(app).patch(`/place/${places[0].id}`).set('authorization', `Bearer ${tokens.user}`).send(updatedData);
         expect(response.status).toBe(403);
     });
 
     test('it should return a 403 error code for a non authenticated user', async () => {
-        const response = await request(app).patch(`/place/${p1.id}`).send(updatedData);
+        const response = await request(app).patch(`/place/${places[0].id}`).send(updatedData);
         expect(response.status).toBe(403);
     });
 });
 
 describe('/DELETE /place/:id', () => {
     test('it should delete a place and return a deleted message with an admin token', async () => {
-        const response = await request(app).delete(`/place/${p1.id}`).set('authorization', `Bearer ${adminToken}`);
+        const response = await request(app).delete(`/place/${places[0].id}`).set('authorization', `Bearer ${tokens.admin}`);
         expect(response.status).toBe(200);
         expect(response.body.message).toEqual("deleted");
     });
 
     test('it should return a 404 code for a non-existent place', async () => {
-        const response = await request(app).delete(`/place/0`).set('authorization', `Bearer ${adminToken}`);
+        const response = await request(app).delete(`/place/0`).set('authorization', `Bearer ${tokens.admin}`);
         expect(response.status).toBe(404);
     });
 
     test('it should return a 403 error code for a non-admin token', async () => {
-        const response = await request(app).delete(`/place/${p2.id}`);
+        const response = await request(app).delete(`/place/${places[1].id}`).set('authorization', `Bearer ${tokens.user}`);
     });
 
     test('it should return a 403 error code for a non authenticated user', async () => {
-        const response = await request(app).delete(`/place/${p2.id}`);
+        const response = await request(app).delete(`/place/${places[1].id}`);
         expect(response.status).toBe(403);
     });
 });
 
-afterAll(async () => {
-    await db.query('DELETE FROM places');
-    await db.end();
-});
+
+
+afterEach(testAfterEach);
+
+afterAll(testAfterAll);

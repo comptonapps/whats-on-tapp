@@ -1,5 +1,7 @@
 const DB = require('../helpers/DB');
-const { RecordNotFoundError } = require('../expressError');
+const { 
+    RecordNotFoundError
+} = require('../expressError');
 const { DB_TABLES } = require('../constants');
 
 class PlaceOwners {
@@ -13,10 +15,7 @@ class PlaceOwners {
 
     static async delete(user_id, place_id) {
         await DB.deleteRecord(DB_TABLES.PLACE_OWNERS, {user_id, place_id});
-    }
-
-    
-        
+    };
 };
 
 module.exports = PlaceOwners;

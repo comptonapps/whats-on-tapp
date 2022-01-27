@@ -15,7 +15,8 @@ class DB {
             return results.rows[0];
         } catch(e) {
             if (e.code && e.code === '23505') {
-                throw new DataCollisionError("Username or email already in use", 401);
+                const message = table === DB_TABLES.USERS ? "Username or email already in use" : "Duplicate record already exists";
+                throw new DataCollisionError(message, 400);
             }
             throw new ExpressError("Server Error", 500);
         };

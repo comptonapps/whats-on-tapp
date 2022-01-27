@@ -7,7 +7,6 @@ const schemaValidator = require('../helpers/schemaValidator');
 const userUpdateSchema = require('../schemata/user/userUpdateSchema.json');
 const drinkRatingSchema = require('../schemata/drinkRating/drinkRatingSchema.json');
 const Place = require('../models/Place');
-const Drink = require('../models/Drink');
 const PlaceOwner = require('../models/PlaceOwner');
 const PlaceRating = require('../models/PlaceRating');
 const DrinkRating = require('../models/DrinkRating');
