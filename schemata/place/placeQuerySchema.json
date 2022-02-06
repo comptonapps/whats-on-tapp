@@ -1,0 +1,96 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "$id": "http://example.com/example.json",
+    "type": "object",
+    "title": "placeQuerySchema",
+    "description": "Schema for validating query params for place requests.",
+    "default": {},
+    "examples": [
+        {
+            "city": "Seattle",
+            "state": "WA",
+            "search": "Joe's pub",
+            "page": 2,
+            "limit": 25,
+            "sort": "name",
+            "asc": false
+        }
+    ],
+    "required": [],
+    "properties": {
+        "city": {
+            "$id": "#/properties/city",
+            "type": "string",
+            "title": "The city schema",
+            "description": "A string representing the place city.",
+            "default": "",
+            "examples": [
+                "Seattle"
+            ]
+        },
+        "state": {
+            "$id": "#/properties/state",
+            "type": "string",
+            "title": "The state schema",
+            "description": "A string representing the place state.",
+            "minLength" : 2,
+            "maxLength" : 2,
+            "default": "",
+            "examples": [
+                "WA"
+            ]
+        },
+        "search": {
+            "$id": "#/properties/search",
+            "type": "string",
+            "title": "The search schema",
+            "description": "A string for searching places.",
+            "default": "",
+            "examples": [
+                "Joe's pub"
+            ]
+        },
+        "page": {
+            "$id": "#/properties/page",
+            "type": "integer",
+            "title": "The page schema",
+            "description": "A page number for a paginated query.",
+            "minimum" : 1,
+            "default": 0,
+            "examples": [
+                2
+            ]
+        },
+        "limit": {
+            "$id": "#/properties/limit",
+            "type": "integer",
+            "title": "The limit schema",
+            "description": "Number of results in a pagination query.",
+            "default": 0,
+            "examples": [
+                25
+            ]
+        },
+        "sort": {
+            "$id": "#/properties/sort",
+            "type": "string",
+            "title": "The sort schema",
+            "description": "A string representing the column title for sorting search results.",
+            "default": "",
+            "examples": [
+                "name"
+            ]
+        },
+        "asc": {
+            "$id": "#/properties/asc",
+            "type": "boolean",
+            "title": "The asc schema",
+            "description": "Boolean representing ascending or decending sort order.",
+            "default": false,
+            "examples": [
+                false
+            ]
+        }
+    },
+    "additionalProperties": false
+}

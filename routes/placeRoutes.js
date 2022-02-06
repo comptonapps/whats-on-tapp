@@ -7,12 +7,16 @@ const {
 const schemaValidator = require('../helpers/schemaValidator');
 const placeCreateSchema = require('../schemata/place/placeCreateSchema.json');
 const placeUpdateSchema = require('../schemata/place/placeUpdateSchema.json');
+const placeQuerySchema = require('../schemata/place/placeQuerySchema.json');
 const Place = require('../models/Place');
 const PlaceRating = require('../models/PlaceRating');
 
-router.get('/', userIsAuthenticated, async (req, res, next) => {
+router.get('/', async (req, res, next) => {
     try {
-        const places = await Place.get();
+        // INSERT query param logic here. 
+        req.query = setValuesToIntegerType(req.query);
+        schemaValidator(req.query, placeQuerySchema);
+        const places = await Place.get(req.query);
         return res.json({places});
     } catch(e) {
         return next(e);
@@ -74,5 +78,24 @@ router.delete('/:id', checkForCorrectUserOrAdmin, async (req, res, next) => {
         return next(e);
     }
 });
+
+function setValuesToIntegerType(obj) {
+    if (obj.page) {
+        obj.page = +obj.page;
+    }
+
+    if (obj.limit) {
+        obj.limit = +obj.limit;
+    }
+
+    if (obj.asc) {
+        if (+obj.asc === 0) {
+            obj.asc = false;
+        } else {
+            obj.asc = true;
+        }
+    }
+    return obj;
+}
 
 module.exports = router;
