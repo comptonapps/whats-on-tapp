@@ -113,6 +113,15 @@ describe('DB.deleteRecord method', () => {
     });
 });
 
+describe('DB.addPaginationToQuery method', () => {
+    test('it should add OFFSET and LIMIT values to a SELECT query string', () => {
+        const pagination = { page: 2, limit: 25};
+        const str = `SELECT * FROM users`;
+        const strPag = DB.addPaginationToQuery(str, pagination);
+        expect(strPag).toEqual('SELECT * FROM users OFFSET 25 LIMIT 25');
+    });  
+});
+
 
 
 afterAll(async () => {

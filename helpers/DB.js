@@ -11,7 +11,7 @@ class DB {
     static async create(table, data) {
         const [str, variables] = this.getCreateStringAndVariables(table, data);
         try {
-            const results = await db.query(str, variables);
+            const results = await this.query(str, variables);
             return results.rows[0];
         } catch(e) {
             if (e.code && e.code === '23505') {
@@ -30,16 +30,19 @@ class DB {
         throw new RecordNotFoundError(`Record not found in ${table}`, 404);
     };
 
-    static async getRecords(table, matchers) {
+    static async getRecords(table, matchers, pagination) {
         const [str, vars] = this.getReadStringAndVariables(table, matchers);
-        const results = await db.query(str, vars);
+        if (pagination) {
+            str = addPaginationToQuery(str, pagination);
+        }
+        const results = await this.query(str, vars);
         return results.rows;
     };
 
 
     static async updateRecord(table, data, matchers) {
         const [str, vars] = this.getUpdateStringAndVariables(table, data, matchers);
-        const result = await db.query(str, vars);
+        const result = await this.query(str, vars);
         if (result.rows.length) {
             return result.rows[0];
         };
@@ -48,10 +51,14 @@ class DB {
 
     static async deleteRecord(table, matchers) {
         const [str, vars] = this.getDeleteStringAndVariables(table, matchers);
-        const result = await db.query(str, vars);
+        const result = await this.query(str, vars);
         if (!result.rows.length) {
             throw new RecordNotFoundError(`Record not found in ${table}`);
         };
+    };
+
+    static async query(str, vars) {
+        return await db.query(str, vars);
     };
 
     static getCreateStringAndVariables(table, data) {
@@ -89,6 +96,10 @@ class DB {
         str += Object.keys(matchers).map((k, i) => `${k}=$${i+1}`).join(' AND ') + " RETURNING *";
         return [str, Object.values(matchers)];
     };
+
+    static addPaginationToQuery(str, { page, limit }) {
+        return str += ` OFFSET ${(page-1)*limit} LIMIT ${limit}`;
+    }
 };
 
 module.exports = DB;
